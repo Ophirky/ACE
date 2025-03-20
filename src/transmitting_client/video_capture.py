@@ -2,12 +2,13 @@
     This file holds the VideoCapture class
 """
 
-# Imports
+# Imports #
 import cv2
 import logging
 import numpy as np
 
-from globals import ErrorMessages, SuccessMessages
+from src.transmitting_client.utils.globals import ErrorMessages, SuccessMessages
+
 
 class VideoCapture:
     """
@@ -28,8 +29,8 @@ class VideoCapture:
             if not self.capture.isOpened():
                 logging.error(ErrorMessages.OPEN_VIDEO_SOURCE.value % self.source)
                 raise ValueError(ErrorMessages.OPEN_VIDEO_SOURCE.value % self.source)
-            
-            logging.info()
+
+            logging.info(SuccessMessages.VIDEO_CAPTURE_INIT.value)
 
         except Exception as e:
             logging.exception(ErrorMessages.VIDEO_CAPTURE_INIT.value.format(source=self.source, error=e))
@@ -49,11 +50,11 @@ class VideoCapture:
             else:
                 logging.warning(ErrorMessages.RETRIEVE_FRAME.value)
             return success, frame
-        
+
         except Exception as e:
             logging.exception(ErrorMessages.GET_FRAME_FROM_SOURCE.value.format(source=self.source, error=e))
-            res_tuple = (False, None)
-        
+            res_tuple = (False, np.ndarray(shape=(0, 0)))
+
         return res_tuple
 
     def release(self) -> None:
@@ -78,4 +79,3 @@ class VideoCapture:
         """
         self.release()
         logging.info(SuccessMessages.RELEASE_VIDEO_SOURCE.value % self.source)
-

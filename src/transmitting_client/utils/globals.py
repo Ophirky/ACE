@@ -3,6 +3,7 @@ Global variables
 """
 from enum import Enum, auto
 
+
 class ErrorMessages(Enum):
     OPEN_VIDEO_SOURCE = "Unable to open video source: %s"
     VIDEO_CAPTURE_INIT = "Error initializing video capture for source {source}: {error}"
@@ -16,3 +17,4 @@ class ErrorMessages(Enum):
 class SuccessMessages(Enum):
     RETRIEVE_FRAME = "Frame retrieved successfully."
     RELEASE_VIDEO_SOURCE = "Video source %s released successfully."
+    VIDEO_CAPTURE_INIT = "Video Capture initiated successfully"

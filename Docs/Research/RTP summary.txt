@@ -1,0 +1,37 @@
+RTP (Real-time Transfer Protocol) - Summary:
+
+RTP protocol is used over a UDP connection.
+
+RTP Packet:
+	- Payload type identification: kind of data sent (video or audio and more)
+	- Source Identifier: identify source
+	- Sequence numbering: used for loss detection
+	- Time stamping: used for timing recovery
+	- Marker: used for significant events in data stream (defined by the application)
+
+Header Format:
+| v=2 | P | X | CC | M | PT | SEQUENCE NUMBER | 4 bytes
+|                 TIME STAMP                  | 4 bytes
+|       Synchronization Source ID - SSRC      | 4 bytes
+|       Contributing Source Ids (CSRCs)       | 4 bytes
+|              EXTENSION HEADER               | Optional
+|         RTP PYALOAD HDR + PAYLOAD           |
+
+v (2 bit) - version identifier
+p (1 bit) - padding bit (when RTP payload needs to be padded
+x (1 bit) - Extension bit, set when an extension header is added
+CC (4 bit) - count of contributing sources (CSRC COunt)
+M (1 bit) - Marker Bit, used for frame indication
+PT (7 bits) - Payload 	types, every payload type has a specific number (a table can be found on wikipedia)
+Sequuence Number (16 bit) - To detect missing and misordered packets
+
+TIME STAMP (4 bytes) - To enable different media streams to be synchronized (like number of ticks)
+SSRC - Uniquely identifies single source of RTP stream
+CSRCs - When number of RTP streams pass through a mixer (Mixer becomes SSRC)
+
+RTP Mixer:
+	Multiple sources to one receiver.
+	When a mixer is used the Mixer will become the SSRC and the original sources will become the CSRCs
+	
+Validating RTP Packets:
+	There is no protocol field like in HTTP so you can search for the version header.
