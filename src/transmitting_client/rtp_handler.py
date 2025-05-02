@@ -8,6 +8,7 @@ import logging
 import time
 import random
 import numpy as np
+import zlib
 
 from src.transmitting_client.video_capture import VideoCapture
 
@@ -26,7 +27,7 @@ class RTPHandler(VideoCapture):
         :return: None
         """
         super(RTPHandler, self).__init__(video_capture_source)
-        
+
         self.payload_type = payload_type
         self.ssrc = random.randint(0, 2 ** 32 - 1)  # Generate a random 32-bit SSRC
         self.sequence_number = 0
@@ -88,7 +89,9 @@ class RTPHandler(VideoCapture):
         try:
             payload = self.encode_frame(self.get_frame()[1])
             header = self.build_header(marker, csrcs)
-            packet = header + payload
+            packet = header + zlib.compress(payload)
+
+            print(len(packet))
 
             logging.info("RTP packet created successfully.")
 

@@ -22,7 +22,7 @@ p (1 bit) - padding bit (when RTP payload needs to be padded
 x (1 bit) - Extension bit, set when an extension header is added
 CC (4 bit) - count of contributing sources (CSRC COunt)
 M (1 bit) - Marker Bit, used for frame indication
-PT (7 bits) - Payload 	types, every payload type has a specific number (a table can be found on wikipedia)
+PT (7 bits) - Payload types, every payload type has a specific number (a table can be found on wikipedia)
 Sequuence Number (16 bit) - To detect missing and misordered packets
 
 TIME STAMP (4 bytes) - To enable different media streams to be synchronized (like number of ticks)
