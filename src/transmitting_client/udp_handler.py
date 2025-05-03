@@ -1,10 +1,11 @@
 """
     Will hold the class incharge of communications
 """
+import logging
 # Imports #
 import socket
-import logging
 import time
+
 from rtp_handler import RTPHandler
 from utils.consts import CommunicationConsts
 from utils.logging_messages import *
@@ -24,9 +25,9 @@ class UDPClientHandler:
         :param video_capture_source: (int) The camera / capture device source (given through the gui).
         :return: None
         """
-        self.server_address = CommunicationConsts.HOST.value
-        self.server_port = CommunicationConsts.PORT.value
-        self.rtp_handler = RTPHandler(CommunicationConsts.PAYLOAD_TYPE.value, video_capture_source)
+        self.server_address = CommunicationConsts.HOST
+        self.server_port = CommunicationConsts.PORT
+        self.rtp_handler = RTPHandler(CommunicationConsts.PAYLOAD_TYPE, video_capture_source)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def transmit_video(self):
@@ -39,19 +40,22 @@ class UDPClientHandler:
                 start_time = time.time()
 
                 # Create RTP packet
-                packet = self.rtp_handler.create_packet()
+                packets = self.rtp_handler.create_packets()
 
                 # Send the packet to the server
-                self.sock.sendto(packet, (self.server_address, self.server_port))
-                logging.info(SuccessMessages.PACKET_SENT.value)
+                logging.debug("Sending frame, fragmented into {} packets".format(len(packets)))
+                for packet in packets:
+                    self.sock.sendto(packet, (self.server_address, self.server_port))
+                logging.info(SuccessMessages.PACKET_SENT)
 
                 # Handling delta time
-                delta_time = time.time() - start_time
-                time.sleep(0.033 - delta_time)  # ~30 frames per second
+                # TODO: FIX DELTA TIME
+                # delta_time = time.time() - start_time
+                # time.sleep(0.033 - delta_time)  # ~30 frames per second
 
             except Exception as e:
-                logging.exception(ErrorMessages.VIDEO_TRANSMISSION_ERROR.value, e)
-                break
+                logging.exception(ErrorMessages.VIDEO_TRANSMISSION_ERROR, e)
+            break
 
 
 if __name__ == '__main__':

@@ -1,10 +1,7 @@
 """
     Global Logging Messages for the server
 """
-from enum import Enum, auto
-
-
-class SuccessMessages(Enum):
+class SuccessMessages:
     """
     Enum to define success log messages.
     """
@@ -15,7 +12,7 @@ class SuccessMessages(Enum):
     CONNECTION_ESTABLISHED = "Connection successfully established with {}:{}"
 
 
-class ErrorMessages(Enum):
+class ErrorMessages:
     """
     Enum to define error log messages.
     """

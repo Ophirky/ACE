@@ -1,15 +1,16 @@
 """
     This file holds the RTP handler class -
 """
-
 # Imports #
-import struct
 import logging
-import time
+import math
 import random
-import numpy as np
-import zlib
+import struct
+import time
 
+import numpy as np
+
+from src.transmitting_client.utils import consts
 from src.transmitting_client.video_capture import VideoCapture
 
 
@@ -31,12 +32,14 @@ class RTPHandler(VideoCapture):
         self.payload_type = payload_type
         self.ssrc = random.randint(0, 2 ** 32 - 1)  # Generate a random 32-bit SSRC
         self.sequence_number = 0
-        self.timestamp = int(time.time() * 1000) % (2 ** 32)  # Initialize with current time in milliseconds & 32 bit
+        self.timestamp = None
+        self._update_timestamp()
 
-    def build_header(self, marker: int = 0, csrcs: list[int] = None) -> bytes:
+    def build_header(self, marker: int = 0, csrcs: list[int] = None, extension_data: bytes = None) -> bytes:
         """
         Constructs the RTP header.
 
+        :param extension_data:
         :param marker: (int) The marker bit.
         :param csrcs: (list[int]) List of contributing source identifiers.
         :return: bytes: The RTP header as a byte string.
@@ -47,7 +50,8 @@ class RTPHandler(VideoCapture):
         cc = len(csrcs)
         version = 2
         padding = 0
-        extension = 0
+        extension = extension_data is not None
+        self.sequence_number += 1
 
         header = (
                 (version << 30) |
@@ -58,12 +62,20 @@ class RTPHandler(VideoCapture):
                 (self.payload_type << 16) |
                 (self.sequence_number & 0xFFFF)
         )
-        self.sequence_number += 1
         header_bytes = struct.pack('!II', header, self.timestamp)
         ssrc_bytes = struct.pack('!I', self.ssrc)
         csrc_bytes = b''.join(struct.pack('!I', csrc) for csrc in csrcs)
+        extension_bytes = b''
+        if extension_data:
+            extension_profile_id = consts.CommunicationConsts.RTP_EXTENSION_PROFILE_ID
+            extension_length = struct.pack('!I', math.ceil(len(extension_data) / 4))[2:]
+            print(extension_length)
+            extension_header = consts.CommunicationConsts.RTP_EXTENSION_HEADER
+            extension_bytes = extension_profile_id + extension_length + extension_header + extension_data
 
-        return header_bytes + ssrc_bytes + csrc_bytes
+        # print(header_bytes + ssrc_bytes + csrc_bytes + extension_bytes)
+
+        return header_bytes + ssrc_bytes + csrc_bytes + extension_bytes
 
     def encode_frame(self, frame: np.ndarray) -> bytes:
         """
@@ -78,28 +90,54 @@ class RTPHandler(VideoCapture):
             logging.exception("Failed to encode video frame: %s", e)
             raise
 
-    def create_packet(self, marker: int = 0, csrcs: list[int] = None) -> bytes:
+    @staticmethod
+    def __assert_max_resolution(payload: bytes) -> None:
+        """
+        TODO: ADD DOCS
+        :param payload: 
+        :return: 
+        """
+        assert len(payload) <= consts.CommunicationConsts.MAX_FRAME_SIZE
+
+    def create_packets(self, csrcs: list[int] = None) -> list[bytes]:
         """
         Creates an RTP packet by combining the header and payload.
 
-        :param marker: (int) The marker bit.
         :param csrcs: (list[int]) List of contributing source identifiers.
         :return: bytes: The complete RTP packet.
         """
         try:
-            payload = self.encode_frame(self.get_frame()[1])
-            header = self.build_header(marker, csrcs)
-            packet = header + zlib.compress(payload)
+            current_frame_data = self.get_frame()[1]
+            payload = self.encode_frame(current_frame_data)
+            # self.__assert_max_resolution(payload)
+            required_frames_number = math.ceil(len(payload) / consts.CommunicationConsts.MAX_RTP_PAYLOAD_SIZE)
 
-            print(len(packet))
+            self._update_timestamp()
 
-            logging.info("RTP packet created successfully.")
+            payloads = []
+            payload_pointer = 0
+            header_len = len(self.build_header(0, csrcs, extension_data=struct.pack('!I', len(payloads))))
+            is_last_frag = 0
+            while payload_pointer < len(payload):
+                payload_read_end_index = payload_pointer + consts.CommunicationConsts.MAX_UDP_PAYLOAD_SIZE - header_len
+                payloads.append(payload[payload_pointer:payload_read_end_index])
+                payload_pointer = payload_read_end_index
+
+            ext_data = struct.pack('!I', len(payloads))
+
+            packets = []
+            for i in range(len(payloads)):
+                is_last_frag = i == len(payloads) - 1
+                header = self.build_header(int(is_last_frag), csrcs, extension_data=ext_data)
+                packets.append(header + payloads[i])
+
+            logging.info("RTP packets created successfully.")
 
         except Exception as e:
             logging.exception("Error while creating RTP packet: %s", e)
             raise
 
-        return packet
+        return packets
 
     def get_ssrc(self) -> int:
         """
@@ -108,3 +146,9 @@ class RTPHandler(VideoCapture):
         :return: int: The SSRC value.
         """
         return self.ssrc
+
+    def _update_timestamp(self) -> None:
+        """
+        :return:
+        """
+        self.timestamp = int(time.time() * 1000) % (2 ** 32)  # Initialize with current time in milliseconds & 32 bit

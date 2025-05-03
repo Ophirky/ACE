@@ -64,7 +64,7 @@ def is_valid_request(request: bytes) -> dict[bool, str] or dict[bool]:
 
     # Ensure method, path, and HTTP version are correctly separated #
     method, path, version = request_line_parts[0], request_line_parts[1], request_line_parts[-1]
-    if method.encode() not in consts.REQUEST_TYPES.values():
+    if method.encode() not in consts.REQUEST_TYPESs():
         return {"valid": False, "reason": f"{method} is not a real method in httpro."}
 
     # Check if the request has a http version #

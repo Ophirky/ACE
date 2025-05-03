@@ -27,13 +27,13 @@ class VideoCapture:
         try:
             self.capture = cv2.VideoCapture(self.source)
             if not self.capture.isOpened():
-                logging.error(ErrorMessages.OPEN_VIDEO_SOURCE.value % self.source)
-                raise ValueError(ErrorMessages.OPEN_VIDEO_SOURCE.value % self.source)
+                logging.error(ErrorMessages.OPEN_VIDEO_SOURCE % self.source)
+                raise ValueError(ErrorMessages.OPEN_VIDEO_SOURCE % self.source)
 
-            logging.info(SuccessMessages.VIDEO_CAPTURE_INIT.value)
+            logging.info(SuccessMessages.VIDEO_CAPTURE_INIT)
 
         except Exception as e:
-            logging.exception(ErrorMessages.VIDEO_CAPTURE_INIT.value.format(source=self.source, error=e))
+            logging.exception(ErrorMessages.VIDEO_CAPTURE_INIT.format(source=self.source, error=e))
             raise
 
     def get_frame(self) -> tuple[bool, np.ndarray]:
@@ -46,13 +46,13 @@ class VideoCapture:
         try:
             success, frame = self.capture.read()
             if success:
-                logging.debug(SuccessMessages.RETRIEVE_FRAME.value)
+                logging.debug(SuccessMessages.RETRIEVE_FRAME)
             else:
-                logging.warning(ErrorMessages.RETRIEVE_FRAME.value)
+                logging.warning(ErrorMessages.RETRIEVE_FRAME)
             return success, frame
 
         except Exception as e:
-            logging.exception(ErrorMessages.GET_FRAME_FROM_SOURCE.value.format(source=self.source, error=e))
+            logging.exception(ErrorMessages.GET_FRAME_FROM_SOURCE.format(source=self.source, error=e))
             res_tuple = (False, np.ndarray(shape=(0, 0)))
 
         return res_tuple
@@ -66,10 +66,10 @@ class VideoCapture:
         try:
             if self.capture:
                 self.capture.release()
-                logging.info(SuccessMessages.RELEASE_VIDEO_SOURCE.value % self.source)
+                logging.info(SuccessMessages.RELEASE_VIDEO_SOURCE % self.source)
 
         except Exception as e:
-            logging.exception(ErrorMessages.RELEASE_SOURCE.value.format(source=self.source, error=e))
+            logging.exception(ErrorMessages.RELEASE_SOURCE.format(source=self.source, error=e))
 
     def __del__(self) -> None:
         """
@@ -78,4 +78,4 @@ class VideoCapture:
         :return: None
         """
         self.release()
-        logging.info(SuccessMessages.RELEASE_VIDEO_SOURCE.value % self.source)
+        logging.info(SuccessMessages.RELEASE_VIDEO_SOURCE % self.source)

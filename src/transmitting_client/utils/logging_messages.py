@@ -1,10 +1,7 @@
 """
     Global Logging Messages for the transmitting client
 """
-from enum import Enum, auto
-
-
-class ErrorMessages(Enum):
+class ErrorMessages:
     """
     Enum to define error log messages.
     """
@@ -19,7 +16,7 @@ class ErrorMessages(Enum):
     VIDEO_TRANSMISSION_ERROR = "Error while transmitting video: %s"
 
 
-class SuccessMessages(Enum):
+class SuccessMessages:
     """
     Enum to define success log messages.
     """
