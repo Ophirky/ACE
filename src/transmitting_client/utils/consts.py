@@ -1,9 +1,7 @@
 """
     This file holds all the constant variables of the transmitting client
 """
-
-
-# Imports #
+import pyaudio
 
 
 class CommunicationConsts:
@@ -18,3 +16,9 @@ class CommunicationConsts:
     MAX_FRAME_SIZE = MAX_RTP_PAYLOAD_SIZE * MAX_PACKETS_PER_FRAME
     RTP_EXTENSION_PROFILE_ID = b'00'
     RTP_EXTENSION_HEADER = b'0000'
+
+class AudioCaptureConsts:
+    CHANNELS = 1
+    SAMPLE_RATE = 44100
+    CHUNK = 1024
+    FORMAT = pyaudio.paInt32

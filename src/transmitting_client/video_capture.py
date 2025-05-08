@@ -47,8 +47,11 @@ class VideoCapture:
             success, frame = self.capture.read()
             if success:
                 logging.debug(SuccessMessages.RETRIEVE_FRAME)
+                new_size = (frame.shape[1] // 2, frame.shape[0] // 2)
+                img_resized = cv2.resize(frame, new_size, interpolation=cv2.INTER_AREA)
+                frame = np.array(img_resized)
             else:
-                logging.warning(ErrorMessages.RETRIEVE_FRAME)
+                logging.error(ErrorMessages.RETRIEVE_FRAME)
             return success, frame
 
         except Exception as e:

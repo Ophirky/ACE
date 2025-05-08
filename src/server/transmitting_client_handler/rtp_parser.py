@@ -1,10 +1,10 @@
 """
     This file contains the RTPPacketDecoder class, which handles incoming RTP packets and parses them into a usable object.
 """
-
-import logging
 # Imports #
 import struct
+import zlib
+import logging
 
 
 class RTPPacketDecoder:
@@ -65,7 +65,6 @@ class RTPPacketDecoder:
 
             # Handle extension header if present
             if self.extension:
-                print("Entered the if")
                 if len(self.packet) < header_size + 4:
                     raise ValueError("RTP packet too short to contain the extension header.")
                 ext_header = struct.unpack('!HH', self.packet[header_size:header_size + 4])
@@ -75,7 +74,6 @@ class RTPPacketDecoder:
                     raise ValueError("RTP packet too short to contain extension data.")
                 self.extension_data = self.packet[header_size + 8:ext_end]
                 header_size = ext_end
-                print(ext_header, ext_length, ext_end)
 
             # Extract payload
             self.payload = self.packet[header_size:]

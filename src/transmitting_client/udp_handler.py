@@ -49,14 +49,19 @@ class UDPClientHandler:
                 logging.info(SuccessMessages.PACKET_SENT)
 
                 # Handling delta time
-                # TODO: FIX DELTA TIME
-                # delta_time = time.time() - start_time
-                # time.sleep(0.033 - delta_time)  # ~30 frames per second
+                delta_time = time.time() - start_time
+                time.sleep(max(0.033 - delta_time, 0))  # ~30 frames per second
 
             except Exception as e:
                 logging.exception(ErrorMessages.VIDEO_TRANSMISSION_ERROR, e)
-            break
+                break
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.DEBUG,  # Log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
+        format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
+        datefmt="%Y-%m-%d %H:%M:%S"  # Date format
+    )
+    logging.debug("Software is awake.")
     UDPClientHandler(0).transmit_video()

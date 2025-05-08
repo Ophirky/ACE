@@ -7,6 +7,7 @@ import math
 import random
 import struct
 import time
+import zlib
 
 import numpy as np
 
@@ -69,11 +70,8 @@ class RTPHandler(VideoCapture):
         if extension_data:
             extension_profile_id = consts.CommunicationConsts.RTP_EXTENSION_PROFILE_ID
             extension_length = struct.pack('!I', math.ceil(len(extension_data) / 4))[2:]
-            print(extension_length)
             extension_header = consts.CommunicationConsts.RTP_EXTENSION_HEADER
             extension_bytes = extension_profile_id + extension_length + extension_header + extension_data
-
-        # print(header_bytes + ssrc_bytes + csrc_bytes + extension_bytes)
 
         return header_bytes + ssrc_bytes + csrc_bytes + extension_bytes
 
@@ -90,15 +88,6 @@ class RTPHandler(VideoCapture):
             logging.exception("Failed to encode video frame: %s", e)
             raise
 
-    @staticmethod
-    def __assert_max_resolution(payload: bytes) -> None:
-        """
-        TODO: ADD DOCS
-        :param payload: 
-        :return: 
-        """
-        assert len(payload) <= consts.CommunicationConsts.MAX_FRAME_SIZE
-
     def create_packets(self, csrcs: list[int] = None) -> list[bytes]:
         """
         Creates an RTP packet by combining the header and payload.
@@ -108,18 +97,16 @@ class RTPHandler(VideoCapture):
         """
         try:
             current_frame_data = self.get_frame()[1]
-            payload = self.encode_frame(current_frame_data)
-            # self.__assert_max_resolution(payload)
-            required_frames_number = math.ceil(len(payload) / consts.CommunicationConsts.MAX_RTP_PAYLOAD_SIZE)
+            payload = zlib.compress(self.encode_frame(current_frame_data))
 
             self._update_timestamp()
 
             payloads = []
             payload_pointer = 0
             header_len = len(self.build_header(0, csrcs, extension_data=struct.pack('!I', len(payloads))))
-            is_last_frag = 0
             while payload_pointer < len(payload):
                 payload_read_end_index = payload_pointer + consts.CommunicationConsts.MAX_UDP_PAYLOAD_SIZE - header_len
+                # payload_read_end_index = payload_pointer + 1500 - header_len
                 payloads.append(payload[payload_pointer:payload_read_end_index])
                 payload_pointer = payload_read_end_index
 
