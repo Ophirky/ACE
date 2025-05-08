@@ -1,6 +1,7 @@
 """
     This file holds the VideoTransmission class.
 """
+# Imports #
 import logging
 import time
 
@@ -9,14 +10,13 @@ import numpy as np
 from rtp_handler import RTPHandler
 from udp_handler import UDPClientHandler
 from utils import consts
-# Imports #
 from utils.payload_types import PayloadTypes
 from video_capture import VideoCapture
 
 
 class VideoTransmission:
     """
-    This class will handle the video transmission
+    Bundles video handlers and handles transmission
     """
 
     def __init__(self, video_capture_source: int):
@@ -27,10 +27,10 @@ class VideoTransmission:
         # TODO: remove un-needed members
         self.port = consts.CommunicationConsts.VIDEO_PORT
         self.video_capture_source = video_capture_source
-        self.payload_type = PayloadTypes.VIDEO.value
+        self.payload_type = PayloadTypes.VIDEO
 
         self.rtp_handle = RTPHandler(self.payload_type)
-        self.udp_handle = UDPClientHandler(self.port, self.payload_type)
+        self.udp_handle = UDPClientHandler(self.port)
 
     def transmit_video(self) -> None:
         """
@@ -45,7 +45,7 @@ class VideoTransmission:
 
             success, frame = video_capture.get_frame()
             if success and isinstance(frame, np.ndarray):
-                payload = np.tobytes(frame)
+                payload = frame.tobytes()
                 packets: list[bytes] = self.rtp_handle.create_packets(payload)
 
                 did_send = self.udp_handle.send_packets(packets)
@@ -53,7 +53,6 @@ class VideoTransmission:
                 if not did_send:
                     # TODO: Handle frame not sent
                     ...
-
 
             # Handling delta time
             delta_time = time.time() - start_time

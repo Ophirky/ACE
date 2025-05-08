@@ -20,18 +20,19 @@ class RTPHandler:
     This class handles the RTP protocol, including creating and parsing RTP packets.
     """
 
-    def __init__(self, payload_type: PayloadTypes) -> None:
+    def __init__(self, payload_type: PayloadTypes, start_timestamp=(int(time.time() * 1000) % (2 ** 32))) -> None:
         """
         Initializes the RTPHandler instance.
 
-        :param payload_type: (int) The payload type for the RTP stream.
+        :param start_timestamp: (int) The start_timestamp for the object
+        :param payload_type: (PayloadTypes) The payload type for the RTP stream.
         :return: None
         """
 
-        self.payload_type = payload_type
+        self.payload_type = payload_type.value
         self.ssrc = random.randint(0, 2 ** 32 - 1)  # Generate a random 32-bit SSRC
         self.sequence_number = 0
-        self.timestamp = None
+        self.timestamp = start_timestamp
         self._update_timestamp()
 
     def build_header(self, marker: int = 0, csrcs: list[int] = None, extension_data: bytes = None) -> bytes:

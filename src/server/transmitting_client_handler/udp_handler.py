@@ -3,10 +3,10 @@
 """
 # Imports #
 import logging
-import socket
-import struct
 import zlib
+import socket
 
+import struct
 import cv2
 import numpy as np
 
@@ -38,26 +38,29 @@ class UDPServerHandler:
         self.sock.settimeout(CommunicationConsts.FRAGMENT_RECEIVE_TIMEOUT)
         logging.info(SuccessMessages.SERVER_LISTENING.format(self.bind_address, self.bind_port))
 
-    def __receive_packet(self, buffer: int) -> bytes:
+    def _receive_packet(self, buffer: int) -> bytes | None:
         """
         Will receive a packet using a UDP connection
-        :param buffer: the buffer to receive
-        :return: the received packet
+        :param buffer: (int) the buffer to receive
+        :return bytes | None: The received packet if one was received
         """
         packet = b''
         try:
             packet, _ = self.sock.recvfrom(buffer)
+        except socket.timeout:
+            logging.debug("Got a None packet")
+            return None
         except socket.error as e:
             logging.exception("NETWORK ERROR: ", e)
 
         return packet
 
-    def assemble_frame(self, seq_start, seq_end):
+    def assemble_frame(self, seq_start: int, seq_end: int) -> bytes | None:
         """
-        #TODO: ADD DOCS (P.S. EAT DICK)
-        :param seq_start:
-        :param seq_end:
-        :return:
+        Assembles / Discards frames
+        :param seq_start: (int) fragment sequence start
+        :param seq_end: (int) fragment sequence end
+        :return bytes | None: bytes if a frame was assembled, None if frame was dropped
         """
         frame = b''
         for seq in range(seq_start, seq_end + 1):
@@ -78,14 +81,13 @@ class UDPServerHandler:
         """
         while True:
             try:
-                packet = self.__receive_packet(CommunicationConsts.BUFFER_SIZE)
+                packet = self._receive_packet(CommunicationConsts.BUFFER_SIZE)
                 if not packet:
                     logging.debug("Got a None Packet")
                     continue
                 else:
                     decoded_packet = RTPPacketDecoder(packet)
 
-                # decoded_packet = RTPPacketDecoder(self.__receive_packet(CommunicationConsts.BUFFER_SIZE))
                 if len(self._uncompleted_frame_packets) > 0 and \
                         next(iter(self._uncompleted_frame_packets.values())).timestamp < decoded_packet.timestamp:
                     self._uncompleted_frame_packets = dict()
@@ -95,13 +97,11 @@ class UDPServerHandler:
                 if decoded_packet.marker != CommunicationConsts.EXPECT_ANOTHER_FRAGMENT:
                     seq_start = decoded_packet.sequence_number - \
                                 struct.unpack('!I', decoded_packet.extension_data)[0] + 1
-                    # print(self._uncompleted_frame_packets.keys())
+
                     frame_data = self.assemble_frame(seq_start, decoded_packet.sequence_number)
                     if frame_data is None:
                         continue
 
-                    # Decode the frame data and reshape it into a frame
-                    # Assuming a standard resolution (e.g., 640x480) and 3 channels for RGB
                     array = np.frombuffer(frame_data, dtype=np.uint8)
                     # frame = array.reshape((480, 640, 3))
                     frame = np.resize(array, (240, 320, 3))

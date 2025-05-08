@@ -2,35 +2,50 @@
     This file contains the AudioCapture class
 """
 # Imports #
-import pyaudio
-
 from utils.consts import AudioCaptureConsts
+import pyaudio
+import logging
 
 
 class AudioCapture:
-    """
-    This class handles audio input from the client
-    """
+    """ Handles real-time audio capture and streaming """
 
-    def __init__(self) -> None:
+    def __init__(self):
         """
-        Constructor
+        Initializes the audio capture instance.
         """
-        self.audio = pyaudio.PyAudio()
-        self.stream = self.audio.open(format=AudioCaptureConsts.FORMAT, channels=AudioCaptureConsts.CHANNELS,
-                                      rate=AudioCaptureConsts.SAMPLE_RATE, input=True)
+        self.rate = AudioCaptureConsts.SAMPLE_RATE
+        self.channels = AudioCaptureConsts.CHANNELS
+        self.chunk_size = AudioCaptureConsts.CHUNK_SIZE
 
-    def record_chunk(self) -> bytes:
-        """
-        Records a frame according to the chunk size
-        :return: list of frames
-        """
-        return self.stream.read(AudioCaptureConsts.CHUNK)
+        try:
+            self.audio = pyaudio.PyAudio()
+            self.stream = self.audio.open(format=pyaudio.paInt16,
+                                          channels=self.channels,
+                                          rate=self.rate,
+                                          input=True,
+                                          frames_per_buffer=self.chunk_size)
+            logging.info("Audio capture initialized successfully.")
+        except Exception as e:
+            logging.exception(f"Error initializing audio capture: {e}")
+            raise
 
-    def stop_stream(self) -> None:
+    def get_audio_chunk(self) -> bytes:
         """
-        Stops the audio stream
-        :return: None
+        Captures and returns a single chunk of audio data.
+
+        :return bytes: Raw audio data.
         """
+        try:
+            data = self.stream.read(self.chunk_size, exception_on_overflow=False)
+            return data
+        except Exception as e:
+            logging.exception(f"Error capturing audio chunk: {e}")
+            return b""
+
+    def release(self):
+        """ Cleans up resources. """
         self.stream.stop_stream()
         self.stream.close()
+        self.audio.terminate()
+        logging.info("Audio capture released.")

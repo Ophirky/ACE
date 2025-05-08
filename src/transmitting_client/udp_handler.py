@@ -4,6 +4,7 @@
 # Imports #
 import logging
 import socket
+import time
 
 from rtp_handler import RTPHandler
 from utils.consts import CommunicationConsts
@@ -18,7 +19,7 @@ class UDPClientHandler:
         and uses a UDP socket for sending packets.
     """
 
-    def __init__(self, port: int, payload_type: PayloadTypes):
+    def __init__(self, port: int):
         """
         Initializes the Client instance.
 
@@ -27,7 +28,6 @@ class UDPClientHandler:
         """
         self.server_address = CommunicationConsts.HOST
         self.server_port = port
-        self.rtp_handler = RTPHandler(payload_type)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def send_packets(self, packets: list[bytes]) -> bool:
@@ -42,6 +42,8 @@ class UDPClientHandler:
             logging.debug("Sending frame, fragmented into {} packets".format(len(packets)))
             for packet in packets:
                 self.sock.sendto(packet, (self.server_address, self.server_port))
+                # Handling shit computers TODO: fix comment
+                time.sleep(0.01)
             logging.info(SuccessMessages.PACKET_SENT)
 
         except Exception as e:
