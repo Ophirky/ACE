@@ -11,24 +11,22 @@ import zlib
 
 import numpy as np
 
-from src.transmitting_client.utils import consts
-from src.transmitting_client.video_capture import VideoCapture
+from utils import consts
+from utils.payload_types import PayloadTypes
 
 
-class RTPHandler(VideoCapture):
+class RTPHandler:
     """
     This class handles the RTP protocol, including creating and parsing RTP packets.
     """
 
-    def __init__(self, payload_type: int, video_capture_source: int) -> None:
+    def __init__(self, payload_type: PayloadTypes) -> None:
         """
         Initializes the RTPHandler instance.
 
         :param payload_type: (int) The payload type for the RTP stream.
-        :param video_capture_source: (int) The camera / capture device.
         :return: None
         """
-        super(RTPHandler, self).__init__(video_capture_source)
 
         self.payload_type = payload_type
         self.ssrc = random.randint(0, 2 ** 32 - 1)  # Generate a random 32-bit SSRC
@@ -75,29 +73,16 @@ class RTPHandler(VideoCapture):
 
         return header_bytes + ssrc_bytes + csrc_bytes + extension_bytes
 
-    def encode_frame(self, frame: np.ndarray) -> bytes:
-        """
-        Encodes a NumPy video frame into bytes.
-
-        :param frame: (np.ndarray) The video frame.
-        :return: bytes: The encoded frame data.
-        """
-        try:
-            return frame.tobytes()  # Convert NumPy array to bytes
-        except Exception as e:
-            logging.exception("Failed to encode video frame: %s", e)
-            raise
-
-    def create_packets(self, csrcs: list[int] = None) -> list[bytes]:
+    def create_packets(self, payload: bytes ,csrcs: list[int] = None) -> list[bytes]:
         """
         Creates an RTP packet by combining the header and payload.
 
+        :param payload: (bytes) payload to put in the rtp packet
         :param csrcs: (list[int]) List of contributing source identifiers.
         :return: bytes: The complete RTP packet.
         """
         try:
-            current_frame_data = self.get_frame()[1]
-            payload = zlib.compress(self.encode_frame(current_frame_data))
+            payload = zlib.compress(payload)
 
             self._update_timestamp()
 

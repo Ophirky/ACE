@@ -5,7 +5,8 @@ import pyaudio
 
 
 class CommunicationConsts:
-    PORT = 5004
+    VIDEO_PORT = 5004
+    AUDIO_PORT = 5006
     HOST = '127.0.0.1'
 
     PAYLOAD_TYPE = 32  # uncompressed video streams
