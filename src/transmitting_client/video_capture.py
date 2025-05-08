@@ -6,6 +6,7 @@
 import cv2
 import logging
 import numpy as np
+import av
 
 from src.transmitting_client.utils.globals import ErrorMessages, SuccessMessages
 
@@ -23,6 +24,7 @@ class VideoCapture:
         :return: None
         """
         self.source = source
+        # self.encoder = av.CodecContext.create("h265", "w")
 
         try:
             self.capture = cv2.VideoCapture(self.source)
@@ -36,7 +38,7 @@ class VideoCapture:
             logging.exception(ErrorMessages.VIDEO_CAPTURE_INIT.value.format(source=self.source, error=e))
             raise
 
-    def get_frame(self) -> tuple[bool, np.ndarray]:
+    def get_frame(self):
         """
         Retrieves a single frame from the video source.
 
@@ -46,7 +48,16 @@ class VideoCapture:
         try:
             success, frame = self.capture.read()
             if success:
+<<<<<<< Updated upstream
                 logging.debug(SuccessMessages.RETRIEVE_FRAME.value)
+=======
+                logging.debug(SuccessMessages.RETRIEVE_FRAME)
+
+                new_size = (frame.shape[1] // 2, frame.shape[0] // 2)
+                img_resized = cv2.resize(frame, new_size, interpolation=cv2.INTER_AREA)
+                frame = np.array(img_resized)
+
+>>>>>>> Stashed changes
             else:
                 logging.warning(ErrorMessages.RETRIEVE_FRAME.value)
             return success, frame

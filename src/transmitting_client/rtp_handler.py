@@ -17,6 +17,7 @@ class RTPHandler(VideoCapture):
     This class handles the RTP protocol, including creating and parsing RTP packets.
     """
 
+<<<<<<< Updated upstream
     def __init__(self, payload_type: int, video_capture_source: int) -> None:
         """
         Initializes the RTPHandler instance.
@@ -31,6 +32,22 @@ class RTPHandler(VideoCapture):
         self.ssrc = random.randint(0, 2 ** 32 - 1)  # Generate a random 32-bit SSRC
         self.sequence_number = 0
         self.timestamp = int(time.time() * 1000) % (2 ** 32)  # Initialize with current time in milliseconds & 32 bit
+=======
+    def __init__(self, payload_type: PayloadTypes, start_timestamp=(int(time.time() * 1000) % (2 ** 32))) -> None:
+        """
+        Initializes the RTPHandler instance.
+
+        :param start_timestamp: (int) The start_timestamp for the object
+        :param payload_type: (PayloadTypes) The payload type for the RTP stream.
+        :return: None
+        """
+
+        self.payload_type = payload_type.value
+        self.ssrc = random.randint(0, 2 ** 32 - 1)  # Generate a random 32-bit SSRC
+        self.sequence_number = 0
+        self.timestamp = start_timestamp
+        self._update_timestamp()
+>>>>>>> Stashed changes
 
     def build_header(self, marker: int = 0, csrcs: list[int] = None) -> bytes:
         """
