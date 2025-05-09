@@ -10,13 +10,15 @@ import logging
 class AudioCapture:
     """ Handles real-time audio capture and streaming """
 
-    def __init__(self):
+    def __init__(self, logger: logging.Logger):
         """
         Initializes the audio capture instance.
         """
         self.rate = AudioCaptureConsts.SAMPLE_RATE
         self.channels = AudioCaptureConsts.CHANNELS
         self.chunk_size = AudioCaptureConsts.CHUNK_SIZE
+
+        self.logger = logger
 
         try:
             self.audio = pyaudio.PyAudio()
@@ -25,9 +27,9 @@ class AudioCapture:
                                           rate=self.rate,
                                           input=True,
                                           frames_per_buffer=self.chunk_size)
-            logging.info("Audio capture initialized successfully.")
+            self.logger.info("Audio capture initialized successfully.")
         except Exception as e:
-            logging.exception(f"Error initializing audio capture: {e}")
+            self.logger.exception(f"Error initializing audio capture: {e}")
             raise
 
     def get_audio_chunk(self) -> bytes:
@@ -40,7 +42,7 @@ class AudioCapture:
             data = self.stream.read(self.chunk_size, exception_on_overflow=False)
             return data
         except Exception as e:
-            logging.exception(f"Error capturing audio chunk: {e}")
+            self.logger.exception(f"Error capturing audio chunk: {e}")
             return b""
 
     def release(self):
@@ -48,4 +50,4 @@ class AudioCapture:
         self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
-        logging.info("Audio capture released.")
+        self.logger.info("Audio capture released.")

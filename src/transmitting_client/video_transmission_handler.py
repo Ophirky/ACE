@@ -12,6 +12,7 @@ from udp_handler import UDPClientHandler
 from utils import consts
 from utils.payload_types import PayloadTypes
 from video_capture import VideoCapture
+from utils.logger import Logger
 
 
 class VideoTransmission:
@@ -22,6 +23,7 @@ class VideoTransmission:
     def __init__(self, video_capture_source: int):
         """
         Initiating class members
+
         :param video_capture_source: (int) camera port
         """
         # TODO: remove un-needed members
@@ -32,12 +34,14 @@ class VideoTransmission:
         self.rtp_handle = RTPHandler(self.payload_type)
         self.udp_handle = UDPClientHandler(self.port)
 
+        self.logger = Logger("video-logger").logger
+
     def transmit_video(self) -> None:
         """
         transmit video using rtp
         :return: None
         """
-        video_capture = VideoCapture(self.video_capture_source)
+        video_capture = VideoCapture(self.logger, self.video_capture_source)
 
         while True:
             # Capture start time
@@ -60,11 +64,4 @@ class VideoTransmission:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.DEBUG,  # Log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
-        format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
-        datefmt="%Y-%m-%d %H:%M:%S"  # Date format
-    )
-    logging.debug("Software is awake.")
-
     VideoTransmission(0).transmit_video()

@@ -97,7 +97,7 @@ class App:
                     while len(body) < content_length:
                         chunk = client_socket.recv(consts.RECV_LENGTH)
                         if not chunk:
-                            logging.debug("Ended body receive")
+                            self.logger.debug("Ended body receive")
                             break
                         body += chunk
 
@@ -196,7 +196,7 @@ class App:
                     if notified_socket == sock:  # checking for new connection #
                         consts.HTTP_LOGGER.debug("Getting new connection")
                         client_socket, client_addr = sock.accept()
-                        logging.info(consts.NEW_CLIENT.format(client_addr[0], client_addr[1]))
+                        self.logger.info(consts.NEW_CLIENT.format(client_addr[0], client_addr[1]))
                         client_socket.settimeout(.5)
                         socket_list.append(client_socket)  # Adding the socket to the connected clients #
                     else:

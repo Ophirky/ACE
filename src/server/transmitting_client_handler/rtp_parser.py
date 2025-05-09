@@ -3,8 +3,7 @@
 """
 # Imports #
 import struct
-import zlib
-import logging
+from src.server.utils.logger import Logger
 
 
 class RTPPacketDecoder:
@@ -31,6 +30,8 @@ class RTPPacketDecoder:
         self.csrcs = []
         self.extension_data = None
         self.payload = None
+
+        self.logger = Logger("rtp-logger").logger
 
         self.decode_packet()
 
@@ -78,13 +79,13 @@ class RTPPacketDecoder:
             # Extract payload
             self.payload = self.packet[header_size:]
 
-            logging.info("RTP packet successfully decoded.")
+            self.logger.info("RTP packet successfully decoded.")
 
         except struct.error as e:
-            logging.exception("Failed to unpack RTP packet: %s", e)
+            self.logger.exception("Failed to unpack RTP packet: %s", e)
             raise ValueError("Invalid RTP packet structure.") from e
         except Exception as e:
-            logging.exception("Error decoding RTP packet: %s", e)
+            self.logger.exception("Error decoding RTP packet: %s", e)
             raise
 
     def get_header_info(self) -> dict:

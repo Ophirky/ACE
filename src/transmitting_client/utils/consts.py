@@ -1,6 +1,9 @@
 """
     This file holds all the constant variables of the transmitting client
 """
+# Imports #
+import logging
+
 import pyaudio
 
 
@@ -23,3 +26,8 @@ class AudioCaptureConsts:
     FORMAT = pyaudio.paInt32
 
 
+class LoggerConsts:
+    FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+    LOG_LEVEL = logging.DEBUG
+    LOG_DIR = r"logs/"
+    LOG_FILE_EXTENSION = ".log"

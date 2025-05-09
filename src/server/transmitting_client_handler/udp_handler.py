@@ -11,8 +11,9 @@ import cv2
 import numpy as np
 
 from src.server.transmitting_client_handler.rtp_parser import RTPPacketDecoder
-from src.server.utils.consts.logging_messages import *
+from src.server.utils.consts.logging_consts import *
 from src.server.utils.consts.udp_consts import CommunicationConsts
+from src.server.utils.logger import Logger
 
 
 class UDPServerHandler:
@@ -36,7 +37,10 @@ class UDPServerHandler:
         self._uncompleted_frame_packets = dict()
 
         self.sock.settimeout(CommunicationConsts.FRAGMENT_RECEIVE_TIMEOUT)
-        logging.info(SuccessMessages.SERVER_LISTENING.format(self.bind_address, self.bind_port))
+
+        self.logger = Logger("UDP-logger").logger
+
+        self.logger.info(SuccessMessages.SERVER_LISTENING.format(self.bind_address, self.bind_port))
 
     def _receive_packet(self, buffer: int) -> bytes | None:
         """
@@ -48,10 +52,10 @@ class UDPServerHandler:
         try:
             packet, _ = self.sock.recvfrom(buffer)
         except socket.timeout:
-            logging.debug("Got a None packet")
+            self.logger.debug("Got a None packet")
             return None
         except socket.error as e:
-            logging.exception("NETWORK ERROR: ", e)
+            self.logger.exception("NETWORK ERROR: ", e)
 
         return packet
 
@@ -83,7 +87,7 @@ class UDPServerHandler:
             try:
                 packet = self._receive_packet(CommunicationConsts.BUFFER_SIZE)
                 if not packet:
-                    logging.debug("Got a None Packet")
+                    self.logger.debug("Got a None Packet")
                     continue
                 else:
                     decoded_packet = RTPPacketDecoder(packet)
@@ -116,7 +120,7 @@ class UDPServerHandler:
                         break
 
             except socket.error as e:
-                logging.exception(ErrorMessages.VIDEO_RECEIVING_ERROR, e)
+                self.logger.exception(ErrorMessages.VIDEO_RECEIVING_ERROR, e)
                 break
 
         # Cleanup OpenCV windows after exiting the loop
@@ -124,11 +128,4 @@ class UDPServerHandler:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.DEBUG,  # Log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
-        format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
-        datefmt="%Y-%m-%d %H:%M:%S"  # Date format
-    )
-
-    logging.debug("Software is awake.")
     UDPServerHandler().receive_video()

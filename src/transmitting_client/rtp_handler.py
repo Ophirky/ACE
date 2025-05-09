@@ -9,10 +9,9 @@ import struct
 import time
 import zlib
 
-import numpy as np
-
 from utils import consts
 from utils.payload_types import PayloadTypes
+from utils.logger import Logger
 
 
 class RTPHandler:
@@ -34,6 +33,8 @@ class RTPHandler:
         self.sequence_number = 0
         self.timestamp = start_timestamp
         self._update_timestamp()
+
+        self.logger = Logger("rtp-logger").logger
 
     def build_header(self, marker: int = 0, csrcs: list[int] = None, extension_data: bytes = None) -> bytes:
         """
@@ -104,10 +105,10 @@ class RTPHandler:
                 header = self.build_header(int(is_last_frag), csrcs, extension_data=ext_data)
                 packets.append(header + payloads[i])
 
-            logging.info("RTP packets created successfully.")
+            self.logger.info("RTP packets created successfully.")
 
         except Exception as e:
-            logging.exception("Error while creating RTP packet: %s", e)
+            self.logger.exception("Error while creating RTP packet: %s", e)
             raise
 
         return packets

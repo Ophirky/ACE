@@ -6,10 +6,9 @@ import logging
 import socket
 import time
 
-from rtp_handler import RTPHandler
 from utils.consts import CommunicationConsts
 from utils.logging_messages import *
-from utils.payload_types import PayloadTypes
+from utils.logger import Logger
 
 
 class UDPClientHandler:
@@ -30,6 +29,8 @@ class UDPClientHandler:
         self.server_port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+        self.logger = Logger("UDP-logger").logger
+
     def send_packets(self, packets: list[bytes]) -> bool:
         """
         Captures video frames, creates RTP packets, and transmits them to the server via UDP.
@@ -39,15 +40,15 @@ class UDPClientHandler:
         success = True
         try:
             # Send the packet to the server
-            logging.debug("Sending frame, fragmented into {} packets".format(len(packets)))
+            self.logger.debug("Sending frame, fragmented into {} packets".format(len(packets)))
             for packet in packets:
                 self.sock.sendto(packet, (self.server_address, self.server_port))
                 # Handling shit computers TODO: fix comment
                 time.sleep(0.01)
-            logging.info(SuccessMessages.PACKET_SENT)
+            self.logger.info(SuccessMessages.PACKET_SENT)
 
         except Exception as e:
-            logging.exception(ErrorMessages.VIDEO_TRANSMISSION_ERROR, e)
+            self.logger.exception(ErrorMessages.VIDEO_TRANSMISSION_ERROR, e)
             success = False
 
         return success

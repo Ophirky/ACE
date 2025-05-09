@@ -1,0 +1,3 @@
+*.log
+src/server/logs
+src/transmitting_client/logs

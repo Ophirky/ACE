@@ -14,7 +14,7 @@ BODY_SEPERATOR = HEADER_SEPERATOR * 2
 RECV_TIMEOUT = 3
 
 # Logging #
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = self.logger.debug
 LOG_DIR = r"Logs"
 LOG_FORMAT = "%(asctime)s | %(levelname)s | %(message)s"
 LOG_FILE_NAME = LOG_DIR + r"\http_logs.log"

@@ -1,6 +1,17 @@
 """
     Global Logging Messages for the server
 """
+# Imports #
+import logging
+
+
+class LoggerConsts:
+    FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+    LOG_LEVEL = logging.DEBUG
+    LOG_DIR = r"../logs/"
+    LOG_FILE_EXTENSION = ".log"
+
+
 class SuccessMessages:
     """
     Enum to define success log messages.
