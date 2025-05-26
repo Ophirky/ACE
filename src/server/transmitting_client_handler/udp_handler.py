@@ -83,6 +83,9 @@ class UDPServerHandler:
         """
         Receives RTP packets from the client, decodes them, and displays the video frames.
         """
+        fps = 0
+        import time
+        start = time.time()
         while True:
             try:
                 packet = self._receive_packet(CommunicationConsts.BUFFER_SIZE)
@@ -91,6 +94,7 @@ class UDPServerHandler:
                     continue
                 else:
                     decoded_packet = RTPPacketDecoder(packet)
+                    self.logger.debug("Got a good packet")
 
                 if len(self._uncompleted_frame_packets) > 0 and \
                         next(iter(self._uncompleted_frame_packets.values())).timestamp < decoded_packet.timestamp:
@@ -114,6 +118,13 @@ class UDPServerHandler:
 
                     # Display the frame using OpenCV
                     cv2.imshow("Received Video", frame)
+
+                    # Count fps #
+                    fps += 1
+                    if time.time() - start >= 1:
+                        self.logger.info("FPS: ", fps)
+                        fps = 0
+                        start = time.time()
 
                     # Break the loop if 'q' is pressed
                     if cv2.waitKey(1) & 0xFF == ord('q'):

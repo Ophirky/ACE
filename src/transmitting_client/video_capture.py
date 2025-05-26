@@ -2,9 +2,10 @@
     This file holds the VideoCapture class
 """
 
+import logging
+
 # Imports #
 import cv2
-import logging
 import numpy as np
 
 from src.transmitting_client.utils.logging_messages import ErrorMessages, SuccessMessages
