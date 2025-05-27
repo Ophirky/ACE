@@ -14,4 +14,11 @@
     TODO: Add threads to transmitting client
     TODO: Build Transmitting client gui
     TODO: Build Receiving client gui
+
+    <-- Reorganizing -->
+    TODO: Change name of Transmitting Client to "TC"
+    TODO: Change name of Receiving Client to "RC"
+    TODO: Change names of UDP_Handler to include Component e.g. TC_UDP_Handler
+    TODO: Make RTP to SRTP and change in project book
+    TODO: Add to the Technology section of the project architecture תיאור הטכנולוגיה הרלוונטית
 """

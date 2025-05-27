@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" version="27.0.9">
+  <diagram name="Page-1" id="o5gd9bwJJ_nbIgfoKg56">
+    <mxGraphModel dx="632" dy="331" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" adaptiveColors="none">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="IAxeg0PJohcV3PKiuJnK-1" target="IAxeg0PJohcV3PKiuJnK-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="IAxeg0PJohcV3PKiuJnK-1" target="IAxeg0PJohcV3PKiuJnK-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-1" value="Transmitting&lt;div&gt;user&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="170" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="IAxeg0PJohcV3PKiuJnK-2" target="IAxeg0PJohcV3PKiuJnK-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-2" value="RTP Packaging" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;textDirection=rtl;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="280" y="100" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-3" value="UDP Handling&lt;div&gt;and transmitting&lt;/div&gt;" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="440" y="100" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="IAxeg0PJohcV3PKiuJnK-6" target="IAxeg0PJohcV3PKiuJnK-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-6" value="RTP Packaging" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=middle;textDirection=rtl;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="280" y="220" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-7" value="UDP Handling&lt;div&gt;and transmitting&lt;/div&gt;" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="220" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="IAxeg0PJohcV3PKiuJnK-8" target="IAxeg0PJohcV3PKiuJnK-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-8" value="Video Handling" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="100" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="IAxeg0PJohcV3PKiuJnK-10" target="IAxeg0PJohcV3PKiuJnK-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IAxeg0PJohcV3PKiuJnK-10" value="Audio Handing" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="220" width="120" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
