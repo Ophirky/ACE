@@ -14,6 +14,7 @@
     TODO: Add threads to transmitting client
     TODO: Build Transmitting client gui
     TODO: Build Receiving client gui
+    TODO: Add Docker instead of Venv
 
     <-- Reorganizing -->
     TODO: Change name of Transmitting Client to "TC"

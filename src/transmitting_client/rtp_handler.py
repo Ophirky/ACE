@@ -2,7 +2,6 @@
     This file holds the RTP handler class -
 """
 # Imports #
-import logging
 import math
 import random
 import struct

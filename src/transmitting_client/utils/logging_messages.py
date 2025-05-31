@@ -3,7 +3,7 @@
 """
 class ErrorMessages:
     """
-    Enum to define error log messages.
+    Constants to define error log messages.
     """
     OPEN_VIDEO_SOURCE = "Unable to open video source: %s"
     VIDEO_CAPTURE_INIT = "Error initializing video capture for source {source}: {error}"
@@ -18,7 +18,7 @@ class ErrorMessages:
 
 class SuccessMessages:
     """
-    Enum to define success log messages.
+    Constants to define success log messages.
     """
     RETRIEVE_FRAME = "Frame retrieved successfully."
     RELEASE_VIDEO_SOURCE = "Video source %s released successfully."
