@@ -1,0 +1,12 @@
+title HTTP Sequence diagram
+
+participant Browser
+participant Server
+
+
+Browser->Server: GET /index.html
+Server->Browser: HTTP 200 ok \r\n\r\n<page-content>
+Browser->Server: GET /user?username=Alice&password=1234
+Server->Browser: HTTP 404 Not Found
+Browser->Server: POST \r\n\r\n{"username":"Alice","pass":"1234"}
+Server->Browser: HTTP 200 ok

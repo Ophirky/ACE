@@ -1,0 +1,12 @@
+WebSocket:
+https://github.com/waqarmumtaz369/WebSocket-Video-Processing
+https://hpbn.co/websocket/
+Microsoft Copilot
+
+RTP:
+https://he.wikipedia.org/wiki/Real-time_Transport_Protocol
+Microsoft Copilot
+
+HTTP:
+https://he.wikipedia.org/wiki/Hypertext_Transfer_Protocol
+Gemini

@@ -18,7 +18,7 @@ Header Format:
 |         RTP PYALOAD HDR + PAYLOAD           |
 
 v (2 bit) - version identifier
-p (1 bit) - padding bit (when RTP payload needs to be padded
+p (1 bit) - padding bit (when RTP payload needs to be padded)
 x (1 bit) - Extension bit, set when an extension header is added
 CC (4 bit) - count of contributing sources (CSRC COunt)
 M (1 bit) - Marker Bit, used for frame indication
