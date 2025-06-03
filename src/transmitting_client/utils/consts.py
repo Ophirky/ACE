@@ -5,11 +5,17 @@
 import logging
 
 import pyaudio
+from enum import Enum
 
 
-class CommunicationConsts:
+class Ports(Enum):
+    """
+    All available Ports
+    """
     VIDEO_PORT = 5004
     AUDIO_PORT = 5006
+
+class CommunicationConsts:
     HOST = '127.0.0.1'
 
     MAX_UDP_PAYLOAD_SIZE = 65507
@@ -22,8 +28,8 @@ class CommunicationConsts:
 class AudioCaptureConsts:
     CHANNELS = 1
     SAMPLE_RATE = 44100
-    CHUNK_SIZE = 1024
-    FORMAT = pyaudio.paInt32
+    CHUNK_SIZE = 512
+    FORMAT = pyaudio.paInt16
 
 
 class LoggerConsts:

@@ -44,7 +44,7 @@ class UDPClientHandler:
             for packet in packets:
                 self.sock.sendto(packet, (self.server_address, self.server_port))
                 # Handling shit computers TODO: fix comment
-                time.sleep(0.01)
+                # time.sleep(0.01)
             self.logger.info(SuccessMessages.PACKET_SENT)
 
         except Exception as e:

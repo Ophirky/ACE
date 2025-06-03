@@ -27,7 +27,7 @@ class VideoTransmission:
         :param video_capture_source: (int) camera port
         """
         # TODO: remove un-needed members
-        self.port = consts.CommunicationConsts.VIDEO_PORT
+        self.port = consts.Ports.VIDEO_PORT.value
         self.video_capture_source = video_capture_source
         self.payload_type = PayloadTypes.VIDEO
 

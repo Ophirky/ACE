@@ -1,0 +1,18 @@
+After consulting with Microsoft Copilot I chose for the testing part the faster model out of the three recommended models
+1️⃣ vosk-model-small-en-us-0.15
+- Size: 40MB
+- Pros: Fast, lightweight, works on Raspberry Pi & mobile devices
+- Cons: Less accurate than larger models
+- Best for: Low-resource environments, quick speech recognition
+2️⃣ vosk-model-en-us-0.22
+- Size: 1.8GB
+- Pros: High accuracy, good for general speech transcription
+- Cons: Requires more memory (~16GB RAM recommended)
+- Best for: Desktop/server applications needing precise transcription
+3️⃣ vosk-model-en-us-0.42-gigaspeech
+- Size: 2.3GB
+- Pros: Best accuracy, trained on large datasets
+- Cons: Heavy on resources, slower than smaller models
+- Best for: Podcasts, professional dictation, high-quality speech recognition
+
+vosk-model-small-en-us-0.15
