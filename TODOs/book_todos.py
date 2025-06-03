@@ -6,8 +6,8 @@
     TODO: Book Content
     TO_BE_REVIEWED TODO: Intro
     TO_BE_REVIEWED TODO: Description Of Knowledge
-    IN_PROGRESS    TODO: Structure / Architecture
-    TODO: Project Implementation
+    TO_BE_REVIEWED    TODO: Structure / Architecture
+    IN_PROGRESS TODO: Project Implementation
     TODO: User Guide
     TODO: Personal Reflection
     TODO: Sources

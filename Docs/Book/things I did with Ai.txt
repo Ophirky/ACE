@@ -3,3 +3,6 @@ RTP Implementation:
 
 Book:
 פירוט ספריות
+
+Encryption:
+    - choose libraries for encryptions (tcp and udp)
