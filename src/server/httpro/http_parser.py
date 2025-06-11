@@ -10,7 +10,7 @@ import httpro
 
 # HttpParser #
 class HttpParser:
-    """Class to make http_ophir request usable in code more easily"""
+    """Class to make http requests usable in code more easily"""
 
     def __init__(self, http_request: bytes) -> None:
         """

@@ -9,7 +9,7 @@ import httpro.functions
 
 
 class HttpMsg:
-    """Create easy to use http_ophir messages including responses and requests"""
+    """Create easy to use http messages including responses and requests"""
 
     def __init__(self, error_code: int = 200, body: bytes = b"", **headers) -> None:
         """

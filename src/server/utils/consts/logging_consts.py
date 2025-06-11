@@ -6,6 +6,9 @@ import logging
 
 
 class LoggerConsts:
+    """
+    Logging constants
+    """
     FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
     LOG_LEVEL = logging.DEBUG
     LOG_DIR = r"../logs/"
@@ -14,7 +17,7 @@ class LoggerConsts:
 
 class SuccessMessages:
     """
-    Enum to define success log messages.
+    Success log messages.
     """
     SERVER_LISTENING = "Server is now listening on {}:{}"
     PACKET_SENT = "RTP packet successfully sent to the server."
@@ -25,7 +28,7 @@ class SuccessMessages:
 
 class ErrorMessages:
     """
-    Enum to define error log messages.
+    Error log messages.
     """
     VIDEO_TRANSMISSION_ERROR = "An error occurred while transmitting video: {}"
     VIDEO_RECEIVING_ERROR = "An error occurred while receiving video: {}"

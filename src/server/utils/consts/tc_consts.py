@@ -8,6 +8,9 @@ from pyaudio import paInt16
 
 # Communication Consts #
 class CommunicationConsts:
+    """
+    Socket related constants
+    """
     PORT = 5004
     HOST = '127.0.0.1'
     PAYLOAD_TYPE = 32  # uncompressed video streams
@@ -24,9 +27,11 @@ class Ports(Enum):
     AUDIO_PORT = 5006
 
 
-# Audio Consts #
 class AudioConsts:
+    """
+    Audio Handling constants
+    """
     CHANNELS = 1
-    SAMPLE_RATE = 44100
+    SAMPLE_RATE = 16000
     CHUNK_SIZE = 512
     FORMAT = paInt16

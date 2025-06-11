@@ -1,3 +1,4 @@
 *.log
 src/server/logs
-src/transmitting_client/logs
+src/tc/logs
+*/__pycache__

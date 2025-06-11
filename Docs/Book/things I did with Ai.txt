@@ -1,8 +1,7 @@
-RTP Implementation:
-    - packet decoder
-
 Book:
 פירוט ספריות
 
 Encryption:
     - choose libraries for encryptions (tcp and udp)
+
+התייעצות כללית על נושאים כמו הצפנה, מחקר על פרוטוקולים וכ"ו

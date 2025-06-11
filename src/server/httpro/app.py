@@ -97,7 +97,7 @@ class App:
                     while len(body) < content_length:
                         chunk = client_socket.recv(consts.RECV_LENGTH)
                         if not chunk:
-                            self.logger.debug("Ended body receive")
+                            consts.HTTP_LOGGER.debug("Ended body receive")
                             break
                         body += chunk
 
