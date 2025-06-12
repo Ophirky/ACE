@@ -4,6 +4,7 @@
 # Imports #
 from multiprocessing import Queue
 
+
 class Queues:
     """
     Queues that are used to transfer data between processes

@@ -14,16 +14,16 @@ class TCHandle:
     Handles TC reception run
     """
 
-    def __init__(self) -> None:
+    def __init__(self, synced_queue: multiprocessing.Queue) -> None:
         """
         Initiates the TCHandle class.
         :return: None
         """
-        self._video_process = multiprocessing.Process(target=VideoReceiveHandler.recv_video, args=[Queues.VIDEO_QUEUE])
-        self._audio_process = multiprocessing.Process(target=AudioReceiveHandler.recv_audio, args=[Queues.AUDIO_QUEUE])
+        self._video_process = multiprocessing.Process(target=VideoReceiveHandler.recv_video, args=(Queues.VIDEO_QUEUE,))
+        self._audio_process = multiprocessing.Process(target=AudioReceiveHandler.recv_audio, args=(Queues.AUDIO_QUEUE,))
         self._syncer_process = multiprocessing.Process(target=self._syncer_handle, args=(Queues.VIDEO_QUEUE,
                                                                                          Queues.AUDIO_QUEUE,
-                                                                                         Queues.SYNCED_QUEUE))
+                                                                                         synced_queue))
 
         # Start processes
         self._video_process.start()

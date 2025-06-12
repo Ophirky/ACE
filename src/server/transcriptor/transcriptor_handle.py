@@ -13,12 +13,12 @@ class TranscriptorHandle:
     Handles transcriptor run
     """
 
-    def __init__(self) -> None:
+    def __init__(self, synced_queue: Queue, transcribed_queue: Queue) -> None:
         """
         Initiates the TranscriptorHandle class.
         :return: None
         """
-        self._mp_process = Process(target=self._mp_process_handle, args=[Queues.SYNCED_QUEUE, Queues.TRANSCRIBED_QUEUE])
+        self._mp_process = Process(target=self._mp_process_handle, args=(synced_queue, transcribed_queue))
         self._mp_process.start()
 
     @staticmethod

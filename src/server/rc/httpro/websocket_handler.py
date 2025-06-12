@@ -6,6 +6,7 @@
 import hashlib
 import base64
 import socket as sock
+import time
 from socket import socket
 
 import src.server.rc.httpro as httpro
@@ -42,6 +43,7 @@ class WebsocketHandler:
         """
         while True:
             self.__send_client(client_socket, ws_handle())
+            time.sleep(0.001)
 
     def upgrade_to_websocket(self, request: http_parser.HttpParser, client_socket: sock.socket, ws_handle) -> None:
         """

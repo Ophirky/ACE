@@ -53,7 +53,9 @@ class MediaProcessor:
             if not self._synced_queue.empty():
                 frame, audio_chunk = self._synced_queue.get()
 
-                self._transcribed_queue.put(self._process_media(frame, audio_chunk))
+                cv2.imshow("transcripted", self._process_media(frame, audio_chunk))
+                # self._transcribed_queue.put(self._process_media(frame, audio_chunk))
+                print("Put something in the trans queue")
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break  # Allows user to close window gracefully

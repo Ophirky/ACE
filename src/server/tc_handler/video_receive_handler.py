@@ -36,9 +36,11 @@ class VideoReceiveHandler:
 
                 # Display the frame using OpenCV
                 video_queue.put((timestamp, frame))
-
             except KeyboardInterrupt:
                 break
+
+            except Exception as e:
+                continue
 
         # Cleanup OpenCV windows after exiting the loop
         cv2.destroyAllWindows()

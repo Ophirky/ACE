@@ -8,11 +8,14 @@ import pyaudio
 from audio_transmission_handler import AudioTransmissionHandler
 from video_transmission_handler import VideoTransmission
 
+
 def audio_handle(start_stamp, input_port) -> None:
     AudioTransmissionHandler(start_stamp, input_port).start_streaming()
 
+
 def video_handle(start_stamp) -> None:
     VideoTransmission(start_stamp).transmit_video()
+
 
 def tc_main() -> None:
     """

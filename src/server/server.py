@@ -15,16 +15,18 @@ def main() -> None:
     Starts streaming
     :return: None
     """
+    TRANSCRIBED_QUEUE = multiprocessing.Queue()
+    SYNCED_QUEUE = multiprocessing.Queue()
+
     # Starting processes
+    # ws_process = multiprocessing.Process(target=websocket_process, args=(TRANSCRIBED_QUEUE,))
+    # ws_process.start()
 
-    ws_process = multiprocessing.Process(target=websocket_process, args=[Queues.TRANSCRIBED_QUEUE])
-    ws_process.start()
-
-    tc_handle = TCHandle()
-    transcriptor_handle = TranscriptorHandle()
+    tc_handle = TCHandle(SYNCED_QUEUE)
+    transcriptor_handle = TranscriptorHandle(transcribed_queue=TRANSCRIBED_QUEUE, synced_queue=SYNCED_QUEUE)
 
     # Joining processes to main process
-    ws_process.join()
+    # ws_process.join()
     tc_handle.tc_join()
     transcriptor_handle.transcriptor_join()
 

@@ -4,6 +4,7 @@
 # Imports #
 import base64
 import struct
+import numpy as np
 from multiprocessing import Queue
 
 import cv2
@@ -11,6 +12,7 @@ import cv2
 import src.server.rc.httpro as httpro
 from src.server.rc.httpro import http_message
 from src.server.rc.httpro import http_parser
+
 
 def websocket_process(transcribed_queue: Queue) -> None:
     """
@@ -20,27 +22,56 @@ def websocket_process(transcribed_queue: Queue) -> None:
     """
     app = httpro.app.App()
 
+    def create_placeholder_image(width=640, height=480, message="No Stream Available"):
+        """
+        Creates a simple placeholder image (e.g., a black frame with text).
+        """
+        # Create a black image
+        img = np.zeros((height, width, 3), dtype=np.uint8)
+
+        # Add text to the image
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 1.5
+        font_thickness = 2
+        text_color = (255, 255, 255)  # White color
+
+        # Get text size to center it
+        text_size = cv2.getTextSize(message, font, font_scale, font_thickness)[0]
+        text_x = (width - text_size[0]) // 2
+        text_y = (height + text_size[1]) // 2
+
+        cv2.putText(img, message, (text_x, text_y), font, font_scale, text_color, font_thickness, cv2.LINE_AA)
+        return img
+
+    # TODO: Prettify
     @app.websocket_handle
     def ws_handle():
-
+        # print(transcribed_queue.qsize())
+        frame_to_send = None
         if not transcribed_queue.empty():
             print("innnnnn")
-            _, buffer = cv2.imencode('.jpg', transcribed_queue.get())
-            frame_data = base64.b64encode(buffer).decode()
+            frame_to_send = transcribed_queue.get()
+        else:
+            frame_to_send = create_placeholder_image()
 
-            message_bytes = frame_data.encode("utf-8")  # Convert message to bytes
-            length = len(message_bytes)
+        _, buffer = cv2.imencode('.jpg', frame_to_send)
+        frame_data = base64.b64encode(buffer).decode()
 
-            # Build WebSocket frame header
-            if length <= 125:
-                header = struct.pack("B", 0x81) + struct.pack("B", length)
-            elif length < 65536:
-                header = struct.pack("B", 0x81) + struct.pack("!BH", 126, length)
-            else:
-                header = struct.pack("B", 0x81) + struct.pack("!BQ", 127, length)
+        message_bytes = frame_data.encode("utf-8")  # Convert message to bytes
+        length = len(message_bytes)
 
-            # Send the formatted WebSocket frame
-            return header + message_bytes
+        # Build WebSocket frame header
+        if length <= 125:
+            header = struct.pack("B", 0x81) + struct.pack("B", length)
+        elif length < 65536:
+            header = struct.pack("B", 0x81) + struct.pack("!BH", 126, length)
+        else:
+            header = struct.pack("B", 0x81) + struct.pack("!BQ", 127, length)
+
+        # Send the formatted WebSocket frame
+        return header + message_bytes
+
+
 
     @app.route(b"/")
     def ws(request: http_parser.HttpParser) -> http_message.HttpMsg:
