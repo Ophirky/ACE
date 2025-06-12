@@ -4,12 +4,11 @@
     DESCRIPTION: Class that allows to create easy to use http_ophir messages including responses and requests
 """
 # Imports #
-import httpro.constants as consts
-import httpro.functions
-
+import src.server.rc.httpro.constants as consts
+from src.server.rc.httpro.functions import dict_to_bytes
 
 class HttpMsg:
-    """Create easy to use http messages including responses and requests"""
+    """Create easy to use http_ophir messages including responses and requests"""
 
     def __init__(self, error_code: int = 200, body: bytes = b"", **headers) -> None:
         """
@@ -21,9 +20,10 @@ class HttpMsg:
         """
         if headers is None:
             headers = dict()
+
         self.error_code = self.__error_code_finder(error_code)
         self.body = body
-        self.headers = httpro.functions.dict_to_bytes(headers)
+        self.headers = dict_to_bytes(headers)
         if body != b"":
             self.headers[b"content_length"] = str(len(body)).encode()
 
@@ -60,14 +60,17 @@ class HttpMsg:
         Formats the headers into bytes
         :return bytes: Byte string with the headers formatted
         """
-        headers = b""
+        headers_bytes = b""
         if self.headers.items():
             for key, value in self.headers.items():
-                headers += key.title().replace(b'_', b'-') + b": " + value + consts.HEADER_SEPERATOR
+                headers_bytes += key.title().replace(b'_', b'-') + b": " + value + consts.HEADER_SEPERATOR
         else:
             consts.HTTP_LOGGER.debug("no headers found")
 
-        return headers
+        # print(headers_bytes)
+        print(self.headers)
+
+        return headers_bytes
 
     def build_message_bytes(self) -> bytes:
         """
@@ -75,8 +78,10 @@ class HttpMsg:
         :return bytes: The http_ophir message
         """
         headers = self.__build_headers_bytes()
-        return consts.HTTP_VERSION + b" " + self.error_code + consts.HEADER_SEPERATOR + headers + \
-            consts.HEADER_SEPERATOR + self.body
+        req = consts.HTTP_VERSION + b" " + self.error_code + consts.HEADER_SEPERATOR + headers + \
+              consts.HEADER_SEPERATOR + self.body
+        # print(req)
+        return req
 
     def __str__(self) -> str:
         """

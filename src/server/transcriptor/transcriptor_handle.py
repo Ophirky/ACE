@@ -18,18 +18,19 @@ class TranscriptorHandle:
         Initiates the TranscriptorHandle class.
         :return: None
         """
-        self._mp_process = Process(target=self._mp_process_handle, args=[Queues.SYNCED_QUEUE])
+        self._mp_process = Process(target=self._mp_process_handle, args=[Queues.SYNCED_QUEUE, Queues.TRANSCRIBED_QUEUE])
         self._mp_process.start()
 
     @staticmethod
-    def _mp_process_handle(synced_queue: Queue) -> None:
+    def _mp_process_handle(synced_queue: Queue, transcribed_queue: Queue) -> None:
         """
         Handle MediaProcessor init.
 
         :param synced_queue: (multiprocessing.Queue) The synced frames queue.
+        :param transcribed_queue: (multiprocessing.Queue) The transcribed frames queue.
         :return: None
         """
-        MediaProcessor(synced_queue).transcript_frames()
+        MediaProcessor(synced_queue, transcribed_queue).transcript_frames()
 
     def transcriptor_join(self) -> None:
         """

@@ -6,13 +6,14 @@
 # Imports #
 import socket
 import time
-
 import select
-import httpro.constants as consts
 import logging
 import re
-import httpro.http_parser
 import os
+
+from src.server.rc.httpro.websocket_handler import WebsocketHandler
+import src.server.rc.httpro.constants as consts
+from src.server.rc import httpro
 
 # global vars #
 global readable_socks_list, writeable_socks_list, exception_socks_list
@@ -30,6 +31,7 @@ class App:
         self.routes = dict()
         self.four_o_four = consts.FOUR_O_FOUR
         self.__closed = False
+        self._ws = WebsocketHandler()
 
     # ---------- Decorators ---------- #
     def route(self, route: bytes, permission_cookie: bytes = "None"):
@@ -61,9 +63,16 @@ class App:
 
         return add_to_route_dict
 
+    def websocket_handle(self, handler):
+        """
+        Allows user to decide what the websocket sends back
+        """
+        self.websocket_handle = handler
+        return handler
+
     # ---------- Private functions ---------- #
     @staticmethod
-    def __receive_message(client_socket: socket) -> bool or httpro.http_parser.HttpParser:
+    def __receive_message(client_socket: socket) -> bool | httpro.http_parser.HttpParser:
         """
         Receives a message from a client
         :param client_socket:
@@ -97,7 +106,7 @@ class App:
                     while len(body) < content_length:
                         chunk = client_socket.recv(consts.RECV_LENGTH)
                         if not chunk:
-                            consts.HTTP_LOGGER.debug("Ended body receive")
+                            logging.debug("Ended body receive")
                             break
                         body += chunk
 
@@ -129,11 +138,14 @@ class App:
                      (request.COOKIES and self.routes[request.URI][1] in request.COOKIES.keys())):
                 response = self.routes[request.URI][0](request)
 
+                if isinstance(response, bytes):
+                    raise TypeError("and http message must be returned!")
+
             elif not os.path.isfile(request.URI[1:].replace(b"%20", b" ")):
                 with open(self.four_o_four, 'rb') as file:
                     response = httpro.http_message.HttpMsg(error_code=404,
-                                                           headers={"content_type": consts.MIME_TYPES[".html"]},
-                                                           body=file.read())
+                                                           body=file.read(),
+                                                           content_type=consts.MIME_TYPES[".html"])
             # If uri does not have a special path #
             else:
                 # extract requested file type from URL (html, jpg etc)
@@ -143,8 +155,7 @@ class App:
                 file_data: bytes
                 with open(request.URI[1:].replace(b"%20", b" "), 'rb') as f:
                     file_data = f.read()
-                response = httpro.http_message.HttpMsg(headers={"content_type": consts.MIME_TYPES[file_type.decode()]},
-                                                       body=file_data)
+                response = httpro.http_message.HttpMsg(body=file_data, content_type=consts.MIME_TYPES[file_type.decode()])
 
             consts.HTTP_LOGGER.info(f"Request to {request.URI} got response of {response.error_code}")
             client_socket.send(response.build_message_bytes())
@@ -196,7 +207,7 @@ class App:
                     if notified_socket == sock:  # checking for new connection #
                         consts.HTTP_LOGGER.debug("Getting new connection")
                         client_socket, client_addr = sock.accept()
-                        self.logger.info(consts.NEW_CLIENT.format(client_addr[0], client_addr[1]))
+                        logging.info(consts.NEW_CLIENT.format(client_addr[0], client_addr[1]))
                         client_socket.settimeout(.5)
                         socket_list.append(client_socket)  # Adding the socket to the connected clients #
                     else:
@@ -204,6 +215,12 @@ class App:
                             consts.HTTP_LOGGER.debug("Starting receive")
                             message: httpro.http_parser.HttpParser = self.__receive_message(notified_socket)
                             consts.HTTP_LOGGER.info(b"Got Request: " + message.URI if message.URI else "None")
+
+                            upgrade_header = b'Upgrade'
+                            if upgrade_header in message.HEADERS and message.HEADERS[upgrade_header]:
+                                self._ws.upgrade_to_websocket(message, client_socket, self.websocket_handle)
+                                continue
+
                             self.__handle_client(message, notified_socket)
 
                         except Exception as e:

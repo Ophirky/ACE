@@ -12,6 +12,7 @@ def dict_to_bytes(dictionary: dict) -> dict[bytes]:
     :param dictionary: the dict to convert
     :return dict[bytes]: the converted dictionary .
     """
+    print(dictionary)
     if dictionary:
         return {(key.encode('utf-8') if isinstance(key, str) else str(key).encode('utf-8')):
                     (value.encode('utf-8') if isinstance(value, str) else str(value).encode('utf-8'))

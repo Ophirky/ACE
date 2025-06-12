@@ -14,7 +14,7 @@ BODY_SEPERATOR = HEADER_SEPERATOR * 2
 RECV_TIMEOUT = 3
 
 # Logging #
-LOG_LEVEL = self.logger.debug
+LOG_LEVEL = logging.DEBUG
 LOG_DIR = r"Logs"
 LOG_FORMAT = "%(asctime)s | %(levelname)s | %(message)s"
 LOG_FILE_NAME = LOG_DIR + r"\http_logs.log"
@@ -47,7 +47,8 @@ ERROR_CODES = {
     405: b"METHOD NOT ALLOWED",
     413: b"PAYLOAD TOO LARGE",
     502: b"BAD GATEWAY",
-    503: b"SERVICE UNAVAILABLE"
+    503: b"SERVICE UNAVAILABLE",
+    101: b"SWITCHING PROTOCOLS"
 }
 
 MIME_TYPES = {
@@ -72,4 +73,4 @@ IP = "0.0.0.0"
 NO_BODY = "Message has no body."
 NEW_CLIENT = "{}:{} connected."
 TESTS_RUN = "Auto tests were run."
-FOUR_O_FOUR = "httpro/html_defaults/404.html"
+FOUR_O_FOUR = r"src\server\httpro\html_defaults\404.html"

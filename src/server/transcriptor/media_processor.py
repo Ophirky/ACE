@@ -17,16 +17,17 @@ class MediaProcessor:
     Handles real-time processing of video frames and audio transcription.
     """
 
-    def __init__(self, synced_queue: multiprocessing.Queue) -> None:
+    def __init__(self, synced_queue: multiprocessing.Queue, transcribed_queue: multiprocessing.Queue) -> None:
         """
         Initializes the MediaProcessor class.
 
         :param synced_queue: (multiprocessing.Queue) The synced frames queue.
+        :param transcribed_queue: (multiprocessing.Queue) The transcribed frames queue.
         :return: None
         """
         self._transcriptor = Transcriptor()
         self._synced_queue = synced_queue
-        self._transcribed_queue = Queues.TRANSCRIBED_QUEUE
+        self._transcribed_queue = transcribed_queue
 
     def _process_media(self, frame: ndarray, audio_chunk: bytes) -> ndarray:
         """
@@ -52,13 +53,7 @@ class MediaProcessor:
             if not self._synced_queue.empty():
                 frame, audio_chunk = self._synced_queue.get()
 
-                # self._transcribed_queue.put(self._process_media(frame, audio_chunk))
-                processed = self._process_media(frame, audio_chunk)
-
-            try:
-                cv2.imshow("Transcribed frame", processed)
-            except Exception as e:
-                continue
+                self._transcribed_queue.put(self._process_media(frame, audio_chunk))
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break  # Allows user to close window gracefully

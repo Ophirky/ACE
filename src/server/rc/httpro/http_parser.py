@@ -4,13 +4,13 @@
     DESCRIPTION: Takes a received http_ophir request and formats it into a structure that is easy to use in code
 """
 # Imports #
-import httpro.constants as consts
-import httpro
+import src.server.rc.httpro.constants as consts
+from src.server.rc import httpro
 
 
 # HttpParser #
 class HttpParser:
-    """Class to make http requests usable in code more easily"""
+    """Class to make http_ophir request usable in code more easily"""
 
     def __init__(self, http_request: bytes) -> None:
         """

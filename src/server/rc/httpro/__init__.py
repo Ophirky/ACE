@@ -5,12 +5,12 @@
 """
 import logging
 import os.path
-import httpro.constants as consts
-import httpro.http_parser
-import httpro.http_message
-import httpro.app
-import httpro.functions
-import httpro.constants
+
+import src.server.rc.httpro.app
+import src.server.rc.httpro.constants as consts
+import src.server.rc.httpro.functions
+import src.server.rc.httpro.http_message as http_message
+import src.server.rc.httpro.http_parser
 
 
 def http_setup() -> None:
@@ -18,8 +18,8 @@ def http_setup() -> None:
     Function that contains all the auto_checks for the http package and sets up logger
     :return: None
     """
-    httpro.http_parser.auto_test_http_parser()
-    httpro.http_message.auto_test_http_message()
+    http_parser.auto_test_http_parser()
+    http_message.auto_test_http_message()
 
     # is_valid_request auto tests #
     request: bytes = b"GET /index.html HTTP/1.1\r\nHost: 192.168.37.45\r\n\r\n"
@@ -39,7 +39,7 @@ def http_setup() -> None:
     consts.HTTP_LOGGER.info("httpro initiated")
 
 
-def is_valid_request(request: bytes) -> dict[bool, str] or dict[bool]:
+def is_valid_request(request: bytes) -> dict[bool, str] | dict[bool]:
     """
     Checks if a http request is valid.
     :param request: the request to validate.
@@ -64,7 +64,7 @@ def is_valid_request(request: bytes) -> dict[bool, str] or dict[bool]:
 
     # Ensure method, path, and HTTP version are correctly separated #
     method, path, version = request_line_parts[0], request_line_parts[1], request_line_parts[-1]
-    if method.encode() not in consts.REQUEST_TYPESs():
+    if method.encode() not in consts.REQUEST_TYPES.values():
         return {"valid": False, "reason": f"{method} is not a real method in httpro."}
 
     # Check if the request has a http version #
@@ -87,15 +87,18 @@ def is_valid_request(request: bytes) -> dict[bool, str] or dict[bool]:
     return {"valid": True}
 
 
-def read_file(path: str) -> http_message:
+def read_file(path: str) -> bytes:
     """
     Create a request for a html page.
     :param path: the path to the html.
     :return http_message: the http formatted message containing the html file.
     """
     if not os.path.isfile(path):
-        consts.HTTP_LOGGER.Exception("File not found.")
+        consts.HTTP_LOGGER.exception("File not found.")
         raise FileNotFoundError("File not found.")
     else:
+        file = b''
         with open(path, 'rb') as f:
-            return f.read()
+            file = f.read()
+
+        return file
