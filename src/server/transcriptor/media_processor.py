@@ -1,7 +1,6 @@
 """
     This file holds the MediaProcessor class.
 """
-# TODO: SEND TO RC
 # Imports #
 import multiprocessing
 import cv2
@@ -56,10 +55,10 @@ class MediaProcessor:
                 frame, audio_chunk = self._synced_queue.get()
                 processed = self._process_media(frame, audio_chunk)
 
-                cv2.imshow("transcripted", processed)
+                # cv2.imshow("transcripted", processed)
                 self._transcribed_queue.put(processed)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break  # Allows user to close window gracefully
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break  # Allows user to close window gracefully
 
-        cv2.destroyAllWindows()  # Cleans up when loop exits
+        # cv2.destroyAllWindows()  # Cleans up when loop exits

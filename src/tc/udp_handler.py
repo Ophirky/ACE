@@ -42,8 +42,9 @@ class UDPClientHandler:
             # Send the packet to the server
             self.logger.debug("Sending frame, fragmented into {} packets".format(len(packets)))
             for packet in packets:
-                self.sock.sendto(packet, (self.server_address, self.server_port))
-                # Handling shit computers TODO: fix comment
+                suc = self.sock.sendto(packet, (self.server_address, self.server_port))
+                if suc == -1:
+                    success = False
                 # time.sleep(0.01)
             self.logger.info(SuccessMessages.PACKET_SENT)
 

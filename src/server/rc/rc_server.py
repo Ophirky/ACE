@@ -50,10 +50,10 @@ def websocket_process(transcribed_queue: Queue) -> None:
     def ws_handle():
         nonlocal last_frame
         if not transcribed_queue.empty():
-            print("innnnnn")
             last_frame = frame_to_send = transcribed_queue.get()
+        elif last_frame is None:
+            frame_to_send = create_placeholder_image()
         else:
-            print("outttttttttt")
             frame_to_send = last_frame
 
         _, buffer = cv2.imencode('.jpg', frame_to_send)

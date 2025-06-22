@@ -135,14 +135,14 @@ class AudioTransmissionHandler:
                 packs += 1
                 if time.time() - timer >= 1:
                     timer = time.time()
-                    print(f"sent last sec: {packs}")
+                    self.logger.info(f"AUDIO sent last sec: {packs}")
                     packs = 0
 
                 prev_send_time = current_time  # Update last send timestamp
 
             except KeyboardInterrupt:
                 self.stop_streaming()
-                print("stoped transmitting")
+                self.logger.debug("stoped transmitting")
                 break
 
             except Exception as e:

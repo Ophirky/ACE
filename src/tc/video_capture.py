@@ -55,6 +55,10 @@ class VideoCapture:
                 img_resized = cv2.resize(frame, new_size, interpolation=cv2.INTER_AREA)
                 frame = np.array(img_resized)
 
+                cv2.imshow("Video Feed", img_resized)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    pass
+
             else:
                 self.logger.error(ErrorMessages.RETRIEVE_FRAME)
             return success, frame

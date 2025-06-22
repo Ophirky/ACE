@@ -2,9 +2,7 @@
     This file holds the VideoTransmission class.
 """
 # Imports #
-import logging
 import time
-
 import numpy as np
 
 from rtp_handler import RTPHandler
@@ -43,21 +41,32 @@ class VideoTransmission:
         """
         video_capture = VideoCapture(self.logger, self.video_capture_source)
 
+        expected_interval = 0.02  # 20ms per packet
+        prev_send_time = time.time()
+        packs = 0
+        timer = time.time()
+
         while True:
             # Capture start time
-            start_time = time.time()
 
             success, frame = video_capture.get_frame()
             if success and isinstance(frame, np.ndarray):
+                current_time = time.time()
+                delta_time = current_time - prev_send_time
+
                 payload = frame.tobytes()
                 packets: list[bytes] = self.rtp_handle.create_packets(payload)
 
-                did_send = self.udp_handle.send_packets(packets)
+                if delta_time < expected_interval:
+                    time.sleep(expected_interval - delta_time)
 
-                if not did_send:
-                    # TODO: Handle frame not sent
-                    ...
+                self.udp_handle.send_packets(packets)
+                time.sleep(0.005)
 
-            # Handling delta time
-            delta_time = time.time() - start_time
-            time.sleep(max(0.033 - delta_time, 0))  # ~30 frames per second
+                packs += 1
+                if time.time() - timer >= 1:
+                    timer = time.time()
+                    self.logger.info(f"VIDEO sent last sec: {packs}")
+                    packs = 0
+
+                prev_send_time = current_time  # Update last send timestamp

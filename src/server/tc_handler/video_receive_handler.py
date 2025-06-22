@@ -1,11 +1,12 @@
 """
     This file holds the VideoReceiveHandler class
 """
+from multiprocessing import Queue
+
 # TODO: Add Logger
 # Imports #
 import cv2
 import numpy as np
-from multiprocessing import Queue
 
 from src.server.tc_handler.udp_handler_generic import UDPServerHandler
 from src.server.utils.consts.tc_consts import Ports
@@ -25,7 +26,6 @@ class VideoReceiveHandler:
         :return: None
         """
         udp_handler = UDPServerHandler(Ports.VIDEO_PORT)
-
         while True:
             try:
                 timestamp, frame = udp_handler.receive_rtp_message()
@@ -35,11 +35,12 @@ class VideoReceiveHandler:
                 frame = cv2.resize(frame, (640, 480))
 
                 # Display the frame using OpenCV
-                video_queue.put((timestamp, frame))
+                video_queue.put((timestamp, frame), timeout=1, block=False)
             except KeyboardInterrupt:
                 break
 
             except Exception as e:
+                print(e)
                 continue
 
         # Cleanup OpenCV windows after exiting the loop
