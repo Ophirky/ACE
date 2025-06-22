@@ -37,7 +37,11 @@ class MediaProcessor:
         :param audio_chunk: (bytes) The corresponding audio data.
         :return numpy.ndarray: The final frame with subtitles.
         """
-        transcribed_text = self._transcriptor.transcript_chunk(audio_chunk)
+        audio_data = audio_chunk
+        if not audio_chunk:
+            audio_data = b""
+
+        transcribed_text = self._transcriptor.transcript_chunk(audio_data)
         processed_frame = Merger.overlay_text(frame, transcribed_text)
 
         return processed_frame
@@ -47,15 +51,13 @@ class MediaProcessor:
         Transcribing text and putting it on frames.
         :return: None
         """
-        processed = None
         while True:
-            # print(self._synced_queue.empty())
             if not self._synced_queue.empty():
                 frame, audio_chunk = self._synced_queue.get()
+                processed = self._process_media(frame, audio_chunk)
 
-                cv2.imshow("transcripted", self._process_media(frame, audio_chunk))
-                # self._transcribed_queue.put(self._process_media(frame, audio_chunk))
-                print("Put something in the trans queue")
+                cv2.imshow("transcripted", processed)
+                self._transcribed_queue.put(processed)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break  # Allows user to close window gracefully

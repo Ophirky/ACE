@@ -40,9 +40,10 @@ class AudioReceiveHandler:
         while True:
             try:
                 audio_data = udp_handler.receive_rtp_message()
-                if not audio_data:
+                if not audio_data or not audio_data[1]:
                     continue
 
+                # print(type(audio_data))
                 audio_queue.put(audio_data)
 
                 packets_per_second += 1

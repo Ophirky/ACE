@@ -4,10 +4,11 @@
 # Imports #
 import base64
 import struct
-import numpy as np
+import time
 from multiprocessing import Queue
 
 import cv2
+import numpy as np
 
 import src.server.rc.httpro as httpro
 from src.server.rc.httpro import http_message
@@ -21,6 +22,7 @@ def websocket_process(transcribed_queue: Queue) -> None:
     :return: None
     """
     app = httpro.app.App()
+    last_frame = None
 
     def create_placeholder_image(width=640, height=480, message="No Stream Available"):
         """
@@ -46,13 +48,13 @@ def websocket_process(transcribed_queue: Queue) -> None:
     # TODO: Prettify
     @app.websocket_handle
     def ws_handle():
-        # print(transcribed_queue.qsize())
-        frame_to_send = None
+        nonlocal last_frame
         if not transcribed_queue.empty():
             print("innnnnn")
-            frame_to_send = transcribed_queue.get()
+            last_frame = frame_to_send = transcribed_queue.get()
         else:
-            frame_to_send = create_placeholder_image()
+            print("outttttttttt")
+            frame_to_send = last_frame
 
         _, buffer = cv2.imencode('.jpg', frame_to_send)
         frame_data = base64.b64encode(buffer).decode()
@@ -69,9 +71,8 @@ def websocket_process(transcribed_queue: Queue) -> None:
             header = struct.pack("B", 0x81) + struct.pack("!BQ", 127, length)
 
         # Send the formatted WebSocket frame
+        time.sleep(0.002)
         return header + message_bytes
-
-
 
     @app.route(b"/")
     def ws(request: http_parser.HttpParser) -> http_message.HttpMsg:

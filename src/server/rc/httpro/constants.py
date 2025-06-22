@@ -4,6 +4,7 @@
     DESCRIPTION: This file contains all the needed constants for the HTTP packet
 """
 import logging
+import os
 
 # HTTP necessities #
 HTTP_VERSION = b"HTTP/1.1"
@@ -73,4 +74,7 @@ IP = "0.0.0.0"
 NO_BODY = "Message has no body."
 NEW_CLIENT = "{}:{} connected."
 TESTS_RUN = "Auto tests were run."
-FOUR_O_FOUR = r"src\server\httpro\html_defaults\404.html"
+base_dir = os.path.dirname(__file__)
+FOUR_O_FOUR = os.path.join(base_dir, 'html_defaults', '404.html')
+
+# FOUR_O_FOUR = r"/src/server/rc/httpro/html_defaults/404.html"
