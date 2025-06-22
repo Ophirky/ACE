@@ -12,7 +12,7 @@ class CommunicationConsts:
     Socket related constants
     """
     PORT = 5004
-    HOST = '127.0.0.1'
+    HOST = '0.0.0.0'
     PAYLOAD_TYPE = 32  # uncompressed video streams
     BUFFER_SIZE = 65535  # Max UDP packet
     EXPECT_ANOTHER_FRAGMENT = 0

@@ -30,7 +30,7 @@ class UDPServerHandler:
         self.bind_port = port.value
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.bind_address, self.bind_port))
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2 ** 22)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2 ** 30)
 
         self._uncompleted_frame_packets = dict()
 
